@@ -38,7 +38,7 @@ class UiHelper {
     double? fontSize,
     FontWeight? fontWeight,
   }) {
-    return Container(
+    return SizedBox(
       width: mWidth,
       height: mHeight,
       child: ElevatedButton(
@@ -46,6 +46,9 @@ class UiHelper {
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: Color(0XFF515DEF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(11),
+          ),
         ),
         child: Text(
           text,
