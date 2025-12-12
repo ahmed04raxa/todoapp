@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/repository/screen/home/home_screen.dart';
 import 'package:todo_app/repository/screen/signup/sign_up_screen.dart';
 import '../../widgets/ui_helper.dart';
 
@@ -6,6 +8,18 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   LoginScreen({super.key});
+
+  Future<void> login(String email, String password) async {
+    UserCredential userCredential;
+    try {
+      userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (ex) {
+      print(ex.code.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +103,16 @@ class LoginScreen extends StatelessWidget {
         text: "Login",
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        callback: () {},
+        callback: () {
+          login(
+            emailController.text.toString(),
+            passwordController.text.toString(),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        },
       ),
     );
   }

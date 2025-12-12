@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/repository/screen/login/login_screen.dart';
 import 'package:todo_app/repository/widgets/ui_helper.dart';
@@ -6,6 +7,16 @@ class SignUpScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   SignUpScreen({super.key});
+
+  Future<void> signUp(String email, String password) async {
+    UserCredential? userCredential;
+    try {
+      userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (ex) {
+      return print(ex.code.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +77,10 @@ class SignUpScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Text("Already Have Account?",style: TextStyle(color: Color(0XFF313131)),),
+                  Text(
+                    "Already Have Account?",
+                    style: TextStyle(color: Color(0XFF313131)),
+                  ),
                   UiHelper.customTextButton(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -89,7 +103,14 @@ class SignUpScreen extends StatelessWidget {
         text: "Sign Up",
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        callback: () {},
+        callback: () {
+          print(
+            signUp(
+              emailController.text.toString(),
+              passwordController.text.toString(),
+            ),
+          );
+        },
       ),
     );
   }
