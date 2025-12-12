@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/repository/screen/crud/add_data.dart';
-import 'package:todo_app/repository/widgets/ui_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,9 +13,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("HOME SCREEN")],
+      appBar: AppBar(title: Text("ALL USERS DATA")),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("Users").snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(child: Text("${index + 1}")),
+                    title: Text(snapshot.data!.docs[index]['firstName']),
+                    subtitle: Text(snapshot.data!.docs[index]['lastName']),
+                    trailing: Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [Text("Edit"), Text("Delete")],
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text(snapshot.hasError.toString()));
+            } else {
+              return Text("No Data Found");
+            }
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 0,
